@@ -1,194 +1,145 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JY Salon 文案生成器</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JY Salon 文案工具</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f7f7fb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+<style>
+body {
+  font-family: Arial;
+  background:#f7f7fb;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
 
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 16px;
-      width: 92%;
-      max-width: 450px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      text-align: center;
-    }
+.card {
+  width:92%;
+  max-width:450px;
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
 
-    h2 {
-      margin-bottom: 10px;
-      font-size: 18px;
-    }
+button {
+  margin:5px;
+  padding:10px 12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
 
-    .btn-group button {
-      margin: 5px;
-      padding: 10px 12px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 13px;
-    }
+.typeBtn {
+  background:#eee;
+}
 
-    .type {
-      background: #eee;
-    }
+.active {
+  background:#ff6aa2;
+  color:white;
+}
 
-    .active {
-      background: #ff6aa2;
-      color: white;
-    }
+#box {
+  background:#f2f2f2;
+  padding:12px;
+  margin:15px 0;
+  border-radius:10px;
+  min-height:120px;
+  text-align:left;
+  white-space:pre-line;
+}
 
-    #textBox {
-      background: #f2f2f2;
-      padding: 15px;
-      border-radius: 10px;
-      min-height: 140px;
-      font-size: 14px;
-      line-height: 1.6;
-      margin: 15px 0;
-      text-align: left;
-      white-space: pre-line;
-    }
-
-    .action button {
-      margin: 5px;
-      padding: 10px 14px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .gen {
-      background: #ff6aa2;
-      color: white;
-    }
-
-    .copy {
-      background: #333;
-      color: white;
-    }
-
-    .wa {
-      background: #25D366;
-      color: white;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: #888;
-      margin-top: 10px;
-    }
-  </style>
+.gen { background:#ff6aa2; color:white; }
+.copy { background:#333; color:white; }
+.wa { background:#25D366; color:white; }
+</style>
 </head>
 
 <body>
 
 <div class="card">
-  <h2>✨ JY Salon 文案生成器</h2>
 
-  <!-- 选择服务 -->
-  <div class="btn-group">
-   <button class="type active" onclick="setType('nail', this)">美甲</button>
-<button class="type" onclick="setType('hair', this)">美发</button>
-<button class="type" onclick="setType('both', this)">美甲 + 美发</button>
-  </div>
+<h3>JY Salon 文案生成器</h3>
 
-  <div id="textBox">请选择服务并点击生成文案</div>
+<div>
+<button class="typeBtn active" onclick="setType('nail', this)">美甲</button>
+<button class="typeBtn" onclick="setType('hair', this)">美发</button>
+<button class="typeBtn" onclick="setType('both', this)">美甲+美发</button>
+</div>
 
-  <div class="action">
-    <button class="gen" onclick="generateText()">生成文案</button>
-    <button class="copy" onclick="copyText()">复制文案</button>
-    <button class="wa" onclick="goWhatsApp()">预约WhatsApp</button>
-  </div>
+<div id="box">请选择服务</div>
 
-  <div class="hint">一键复制打开小红书点击粘贴文案即可</div>
+<button class="gen" onclick="generate()">生成文案</button>
+<button class="copy" onclick="copy()">复制</button>
+<button class="wa" onclick="wa()">WhatsApp预约</button>
+
 </div>
 
 <script>
-  let currentType = "nail";
-  let currentText = "";
+let type = "nail";
+let textNow = "";
 
-  const baseInfo = `📍JY Hair Design Nail Salon (Bukit Indah, Johor Bahru)
+const base =
+`📍JY Hair Design Nail Salon (Bukit Indah, Johor Bahru)
 
 #bukitindah美发美甲店 #jbsalon #新山美甲 #新山剪发 #jyhairdesignnailsalon`;
 
-  const texts = {
-    nail: [
-      "今天来做美甲，整体体验很舒服🤍\n细节做得很精致，很满意✨",
-      "美甲师很细心，会一直确认我想要的感觉💅",
-      "做出来的款式比想象中更好看，很喜欢🤍",
-      "过程很放松，没有压力，体验很好🌿",
-      "简单款也能做得很高级感✨"
-    ],
+const data = {
+nail:[
+"今天做美甲，整体很舒服🤍",
+"美甲师很细心💅",
+"成品很精致✨",
+"简单款也很好看🌿"
+],
+hair:[
+"今天剪头发很满意💇‍♀️",
+"设计师很专业✨",
+"剪完很自然👍",
+"整体体验很好🤍"
+],
+both:[
+"今天头发+美甲一起做🤍",
+"整体变得很精致✨",
+"一次搞定很方便💅",
+"效果很满意👍"
+]
+};
 
-    hair: [
-      "今天来剪头发，设计师很专业，会给建议💇‍♀️",
-      "剪完直接变精神了，很自然很好看✨",
-      "不是随便剪，是会根据脸型调整👍",
-      "整个过程很舒服，没有推销压力🤍",
-      "做完发型感觉整个人都不一样了📸"
-    ],
+function setType(t, btn){
+type = t;
 
-    both: [
-      "今天一次做头发+美甲，整体体验很满意🤍",
-      "剪发+美甲一起做很方便，一次解决✨",
-      "从头到指甲都被照顾到，很舒服🌿",
-      "做完直接变精致感，很喜欢这次效果💅",
-      "整体服务很细心，会再回来的👍"
-    ]
-  };
+document.querySelectorAll(".typeBtn").forEach(b=>{
+b.classList.remove("active");
+});
 
-function setType(type, btn) {
-  currentType = type;
-
-  document.querySelectorAll(".type").forEach(b => {
-    b.classList.remove("active");
-  });
-
-  btn.classList.add("active");
+btn.classList.add("active");
 }
 
-  function generateText() {
-    let arr = texts[currentType];
-    let newText = arr[Math.floor(Math.random() * arr.length)];
+function generate(){
+let arr = data[type];
+textNow = arr[Math.floor(Math.random()*arr.length)];
 
-    while (newText === currentText) {
-      newText = arr[Math.floor(Math.random() * arr.length)];
-    }
+document.getElementById("box").innerText =
+textNow + "\n\n" + base;
+}
 
-    currentText = newText;
+function copy(){
+if(!textNow){
+alert("先生成文案");
+return;
+}
 
-    document.getElementById("textBox").innerText =
-      newText + "\n\n" + baseInfo;
-  }
+navigator.clipboard.writeText(textNow + "\n\n" + base);
+alert("已复制");
+}
 
-  function copyText() {
-    if (!currentText) {
-      alert("请先生成文案");
-      return;
-    }
-
-    navigator.clipboard.writeText(currentText + "\n\n" + baseInfo);
-    alert("已复制，可以去小红书发布📱");
-  }
-
-  function goWhatsApp() {
-    const phone = "60176368216"; // 你这个号码
-    const msg = encodeURIComponent("Hi，我想预约JY Salon，请问还有时间吗？");
-    window.open(https://wa.me/${phone}?text=${msg}, "_blank");
-  }
+function wa(){
+window.open("https://wa.me/60176368216?text=Hi，我想预约JY Salon", "_blank");
+}
 </script>
 
 </body>
