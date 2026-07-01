@@ -110,6 +110,18 @@ Taman Bukit Indah<br><br>
 
 </div>
 
-</body>
+</div>
 
+<script>
+function copyText(text){
+    navigator.clipboard.writeText(text).then(() => {
+        alert("文案已复制！打开小红书去发布吧 ✨");
+        window.location.href = "xhsdiscover://";
+    }).catch(() => {
+        alert("复制失败，请手动复制");
+    });
+}
+</script>
+
+</body>
 </html>
