@@ -100,9 +100,9 @@
 
   <!-- 选择服务 -->
   <div class="btn-group">
-    <button class="type active" onclick="setType('nail')">美甲</button>
-    <button class="type" onclick="setType('hair')">美发</button>
-    <button class="type" onclick="setType('both')">美甲 + 美发</button>
+   <button class="type active" onclick="setType('nail', this)">美甲</button>
+<button class="type" onclick="setType('hair', this)">美发</button>
+<button class="type" onclick="setType('both', this)">美甲 + 美发</button>
   </div>
 
   <div id="textBox">请选择服务并点击生成文案</div>
@@ -113,7 +113,7 @@
     <button class="wa" onclick="goWhatsApp()">预约WhatsApp</button>
   </div>
 
-  <div class="hint">一键复制 + 一键预约，提高顾客转化📈</div>
+  <div class="hint">一键复制打开小红书点击粘贴文案即可</div>
 </div>
 
 <script>
@@ -150,14 +150,15 @@
     ]
   };
 
-  function setType(type) {
-    currentType = type;
+function setType(type, btn) {
+  currentType = type;
 
-    document.querySelectorAll(".type").forEach(btn => {
-      btn.classList.remove("active");
-    });
-    event.target.classList.add("active");
-  }
+  document.querySelectorAll(".type").forEach(b => {
+    b.classList.remove("active");
+  });
+
+  btn.classList.add("active");
+}
 
   function generateText() {
     let arr = texts[currentType];
