@@ -111,11 +111,9 @@ both:[
 
 function setType(t, btn){
 type = t;
-
 document.querySelectorAll(".typeBtn").forEach(b=>{
 b.classList.remove("active");
 });
-
 btn.classList.add("active");
 }
 
@@ -133,14 +131,30 @@ alert("先生成文案");
 return;
 }
 
-navigator.clipboard.writeText(textNow + "\n\n" + base);
-alert("已复制");
+navigator.clipboard.writeText(textNow + "\n\n" + base)
+.then(() => {
+alert("已复制，正在打开小红书…");
+
+// 延迟一点让用户看到提示
+setTimeout(() => {
+
+  // 小红书 App Scheme（优先）
+  window.location.href = "xhsdiscover://";
+
+  // 如果打不开 App（备用网页）
+  setTimeout(() => {
+    window.open("https://www.xiaohongshu.com", "_blank");
+  }, 800);
+
+}, 800);
+
+});
+
 }
 
 function wa(){
 window.open("https://wa.me/60176368216?text=Hi，我想预约JY Salon", "_blank");
 }
 </script>
-
 </body>
 </html>
